@@ -44,12 +44,13 @@ void showUsage(const char * appName) {
 
 int runAudioSwitch(int argc, const char * argv[]) {
 	char requestedDeviceName[256];
+    char currentDeviceName[256];
 	AudioDeviceID chosenDeviceID = kAudioDeviceUnknown;
 	ASDeviceType typeRequested = kAudioTypeUnknown;
 	int function = 0;
 
 	int c;
-	while ((c = getopt(argc, (char **)argv, "hacnt:s:")) != -1) {
+	while ((c = getopt(argc, (char **)argv, "habxcnt:s:")) != -1) {
 		switch (c) {
 			case 'a':
 				// show all
@@ -65,21 +66,37 @@ int runAudioSwitch(int argc, const char * argv[]) {
 				function = kFunctionSetDevice;
                 strcpy(requestedDeviceName, "HDMI");
 				break;
+                
             case 'b':
                 // run -s 'Built-in Output'
                 function = kFunctionSetDevice;
                 strcpy(requestedDeviceName, "Built-in Output");
                 break;
+                
             case 'n':
 				// cycle to the next audio device
 				function = kFunctionCycleNext;
 				break;
 				
-			case 's':
-				// set the requestedDeviceName
-				function = kFunctionSetDevice;
-				strcpy(requestedDeviceName, optarg);
+			case 'x':
+				// cycle between HDMI and Bult-in output
+                getDeviceName(getCurrentlySelectedDeviceID(kAudioTypeOutput), currentDeviceName);
+                                
+                if(strncmp(currentDeviceName, "Built-in Output", 256) == 0) {
+                    strcpy(requestedDeviceName, "HDMI");
+                } else if (strncmp(currentDeviceName, "HDMI", 256) == 0) {
+                    strcpy(requestedDeviceName, "Built-in Output");
+                }
+                
+                function = kFunctionSetDevice;
 				break;
+                
+            case 's':
+                // set the requestedDeviceName
+                function = kFunctionSetDevice;
+                strcpy(requestedDeviceName, optarg);
+                break;
+                
 
 			case 't':
 				// set the requestedDeviceName
