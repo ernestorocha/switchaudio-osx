@@ -37,6 +37,8 @@ void showUsage(const char * appName) {
            
            "  -t type        : device type (input/output/system).  Defaults to output.\n"
            "  -n             : cycles the audio device to the next one\n"
+           "  -b             : shortcut for -s 'Built-in Output'\n"
+           "  -h             : shortcut for -s 'HDMI'\n"
            "  -s device_name : sets the audio device to the given device by name\n\n",appName);
 }
 
@@ -59,11 +61,16 @@ int runAudioSwitch(int argc, const char * argv[]) {
 				break;
 
 			case 'h':
-				// show help
-				function = kFunctionShowHelp;
+				// run -s 'HDMI'
+				function = kFunctionSetDevice;
+                strcpy(requestedDeviceName, "HDMI");
 				break;
-				
-			case 'n':
+            case 'b':
+                // run -s 'Built-in Output'
+                function = kFunctionSetDevice;
+                strcpy(requestedDeviceName, "Built-in Output");
+                break;
+            case 'n':
 				// cycle to the next audio device
 				function = kFunctionCycleNext;
 				break;
